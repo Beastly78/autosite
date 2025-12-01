@@ -24,11 +24,11 @@ def make_article(topic):
     - 3 product recommendations
     - list of pros/cons for each product
     - conclusion
-    Do NOT mention AI. Format in markdown.
+    Use markdown formatting.
     """
 
     chat_completion = client.chat.completions.create(
-        model="llama-3.1-8b-instant",  # this model is 100% real and free
+        model="llama-3.1-8b-instant",
         messages=[
             {
                 "role": "user",
@@ -47,13 +47,27 @@ def make_article(topic):
 topic = random.choice(topics)
 article = make_article(topic)
 
+# Required format for GitHub Pages posts:
+# _posts/YYYY-MM-DD-title.md
 today = datetime.now().strftime("%Y-%m-%d")
-filename = f"articles/{today}-{topic.replace(' ', '-')}.md"
+title_for_filename = topic.lower().replace(" ", "-")
 
-os.makedirs("articles", exist_ok=True)
+# Create _posts folder if it doesn't exist
+os.makedirs("_posts", exist_ok=True)
+
+# Write file with proper Jekyll front matter
+filename = f"_posts/{today}-{title_for_filename}.md"
+
+front_matter = f"""---
+layout: post
+title: "{topic}"
+date: {today}
+---
+
+"""
+
 with open(filename, "w", encoding="utf-8") as f:
-    f.write(article)
+    f.write(front_matter + article)
 
-print(f"Generated article: {filename}")
-
+print(f"Generated blog post: {filename}")
 
